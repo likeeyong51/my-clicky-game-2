@@ -1,0 +1,32 @@
+components:
+- components:
+  - components:
+    - layout_properties: {grid_position: 'VAAXIT,CDZJHV'}
+      name: player_txb
+      properties: {placeholder: 'What should be call you?', tooltip: Enter your player name here}
+      type: TextBox
+    - event_bindings: {click: load_btn_click}
+      layout_properties: {grid_position: 'VAAXIT,XYHWBU'}
+      name: load_btn
+      properties: {icon: 'fa:check-circle', role: outlined-button, text: Let's go}
+      type: Button
+    layout_properties: {grid_position: 'VLVWNE,LYDXSA'}
+    name: player_card
+    properties: {role: outlined-card}
+    type: ColumnPanel
+  - layout_properties: {grid_position: 'XEKUXI,QCSKGT'}
+    name: game_pnl
+    properties: {role: outlined-card, visible: false}
+    type: ColumnPanel
+  layout_properties: {slot: default}
+  name: content_panel
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
+- layout_properties: {slot: nav-right}
+  name: navbar_links
+  properties: {}
+  type: FlowPanel
+container:
+  properties: {html: '@theme:standard-page.html'}
+  type: HtmlTemplate
+is_package: true

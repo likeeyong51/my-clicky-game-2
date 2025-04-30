@@ -3,7 +3,8 @@ unique_ids:
     standard-page.html: KWI66C6AOQAIQ4CT2MYSC4SVZ67FNJUJ
     theme.css: J2CUY4YQ6PUVSHVI7QPS2VP7P7LPFD2I
   forms:
-    Form1: RMTTEMQW5CXQADBU2ND4ITXXCTI3BJMY
+    game_frm: '1745985794261331310125342.5078'
+    player_frm: RMTTEMQW5CXQADBU2ND4ITXXCTI3BJMY
   modules: {}
   scripts: {}
   server_modules: {}

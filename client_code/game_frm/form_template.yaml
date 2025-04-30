@@ -1,0 +1,38 @@
+components:
+- event_bindings: {tick: game_tmr_tick}
+  layout_properties: {grid_position: 'XQPBHV,MXKSJS'}
+  name: game_tmr
+  properties: {interval: 1}
+  type: Timer
+- components:
+  - layout_properties: {grid_position: 'XQVPCA,GDGLMY'}
+    name: game_instruction_lbl
+    properties: {bold: true, font_size: 24, icon: 'fa:info-circle', text: Click on the letter 'A' as many times as you can in 25 seconds.}
+    type: Label
+  layout_properties: {grid_position: 'XQPBHV,WSGVJD'}
+  name: game_crd
+  properties: {role: outlined-card}
+  type: ColumnPanel
+- layout_properties: {grid_position: 'AEAJXC,KCDJWG'}
+  name: timer_lbl
+  properties: {align: center, bold: true, icon: 'fa:bell', role: headline, text: '25'}
+  type: Label
+- layout_properties: {grid_position: 'AEAJXC,MTSKKY'}
+  name: score_lbl
+  properties: {align: center, bold: true, icon: 'fa:circle-thin', role: headline, text: '0'}
+  type: Label
+- layout_properties: {grid_position: 'CJHBFU,LQZJBA'}
+  name: letter_lbl
+  properties: {align: center, bold: true, role: display, text: X}
+  type: Label
+- layout_properties: {grid_position: 'JOCKOD,CGBSTE'}
+  name: spacer_1
+  properties: {height: 64}
+  type: Spacer
+- event_bindings: {click: start_btn_click}
+  layout_properties: {grid_position: 'FPINGP,KQGCQC'}
+  name: start_btn
+  properties: {bold: true, font_size: 20, icon: 'fa:arrow-circle-right', role: elevated-button, text: Start}
+  type: Button
+container: {type: ColumnPanel}
+is_package: true
