@@ -1,18 +1,33 @@
 components:
 - components:
   - components:
-    - layout_properties: {grid_position: 'VAAXIT,CDZJHV'}
+    - layout_properties: {grid_position: 'VAAXIT,GENWEC'}
+      name: spacer_2
+      properties: {height: 32}
+      type: Spacer
+    - data_bindings:
+      - {code: 'self.item[''player'']', property: text, writeback: true}
+      layout_properties: {grid_position: 'VAAXIT,CDZJHV'}
       name: player_txb
       properties: {placeholder: 'What should be call you?', tooltip: Enter your player name here}
       type: TextBox
     - event_bindings: {click: load_btn_click}
       layout_properties: {grid_position: 'VAAXIT,XYHWBU'}
       name: load_btn
-      properties: {icon: 'fa:check-circle', role: outlined-button, text: Let's go}
+      properties:
+        icon: fa:check-circle
+        role: outlined-button
+        spacing:
+          margin: [null, 11, null, 0]
+        text: Let's play
       type: Button
+    - layout_properties: {grid_position: 'VAAXIT,CJYYWM'}
+      name: spacer_1
+      properties: {height: 32}
+      type: Spacer
     layout_properties: {grid_position: 'VLVWNE,LYDXSA'}
     name: player_card
-    properties: {role: outlined-card}
+    properties: {col_widths: '{"CDZJHV":35,"XYHWBU":15,"CJYYWM":15,"GENWEC":10}', role: outlined-card}
     type: ColumnPanel
   - layout_properties: {grid_position: 'XEKUXI,QCSKGT'}
     name: game_pnl

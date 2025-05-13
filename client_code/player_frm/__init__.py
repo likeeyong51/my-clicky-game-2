@@ -15,4 +15,4 @@ class player_frm(player_frmTemplate):
             # show game panel
             self.game_pnl.visible= True
             # load game form
-            self.game_pnl.add_component(game_frm())
+            self.game_pnl.add_component(game_frm(player=self.item('player')))
