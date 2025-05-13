@@ -16,17 +16,20 @@ components:
     spacing:
       margin: [null, null, 27, null]
   type: ColumnPanel
-- layout_properties: {grid_position: 'AEAJXC,KCDJWG'}
+- data_bindings: []
+  layout_properties: {grid_position: 'AEAJXC,KCDJWG'}
   name: timer_lbl
   properties: {align: center, bold: true, foreground: '#93342f', icon: 'fa:bell', role: headline, text: '25'}
   type: Label
 - data_bindings:
   - {code: 'self.item[''player''] + "''s score:"', property: text, writeback: false}
   layout_properties: {grid_position: 'AEAJXC,TETGBV'}
-  name: label_1
+  name: player_lbl
   properties: {align: right, icon: 'fa:address-book-o', icon_align: right, role: headline}
   type: Label
-- layout_properties: {grid_position: 'AEAJXC,MTSKKY'}
+- data_bindings:
+  - {code: 'str(self.item[''score'']) + ''/'' + str(self.item[''target_count''])', property: text, writeback: false}
+  layout_properties: {grid_position: 'AEAJXC,MTSKKY'}
   name: score_lbl
   properties: {align: center, bold: true, foreground: '#1d6177', icon: '', role: headline, text: '0'}
   type: Label

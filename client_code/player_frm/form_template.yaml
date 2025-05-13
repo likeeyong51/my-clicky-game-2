@@ -26,7 +26,7 @@ components:
       properties: {height: 32}
       type: Spacer
     layout_properties: {grid_position: 'VLVWNE,LYDXSA'}
-    name: player_card
+    name: player_crd
     properties: {col_widths: '{"CDZJHV":35,"XYHWBU":15,"CJYYWM":15,"GENWEC":10}', role: outlined-card}
     type: ColumnPanel
   - layout_properties: {grid_position: 'XEKUXI,QCSKGT'}
