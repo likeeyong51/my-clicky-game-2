@@ -98,7 +98,7 @@ class game_frm(game_frmTemplate):
                     'score':self.item['score'], 
                     'target_count':self.item['target_count']
                 }
-                if not anvil.server.call('add_score', self.item['player'], self.score_card):
+                if not anvil.server.call('add_score', self.score_card):
                     Notification('Score card did not save properly...').show()
                     
                 # write results of the score list ui
@@ -139,9 +139,6 @@ class game_frm(game_frmTemplate):
         if not target: # if not generating a random target letter
             # update previous to latest random letter
             self.item['previous'] = random_letter
-        # # keep count of target letter
-        # if random_letter == self.item['target_letter']:
-        #     self.item['target_count'] += 1
 
-        return random_letter
+        return random_letter # returned current random letter
             

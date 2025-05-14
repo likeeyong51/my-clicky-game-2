@@ -18,7 +18,7 @@ class player_frm(player_frmTemplate):
         """This method is called when the button is clicked"""
         if self.player_txb.text:
             self.player_txb.text = self.player_txb.text.title()
-            if anvil.server.call('add_player', player_name=self.item['player']):
+            if anvil.server.call('add_player', player_name=self.player_txb.text):
                 Notification(f'{self.player_txb.text} added').show()
             else:
                 Notification(f'{self.player_txb.text} has been taken.\nRegister a new player name if you are a new user').show()

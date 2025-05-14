@@ -68,7 +68,7 @@ components:
   name: spacer_2
   properties: {height: 32}
   type: Spacer
-- layout_properties: {grid_position: 'OXPGNA,RQNHIL'}
+- layout_properties: {grid_position: 'OXPGNA,MZAAIJ'}
   name: score_list_txa
   properties:
     auto_expand: true
@@ -87,6 +87,6 @@ components:
   properties: {bold: true, font_size: 20, icon: 'fa:arrow-circle-right', role: elevated-button, text: Play}
   type: Button
 container:
-  properties: {col_widths: '{"KCDJWG":20,"TETGBV":20,"MTSKKY":10,"YAYGCU":30,"CVJOFO":15,"SFERSF":18,"JKSFAJ":25,"RQNHIL":12}'}
+  properties: {col_widths: '{"KCDJWG":20,"TETGBV":20,"MTSKKY":10,"YAYGCU":30,"CVJOFO":15,"SFERSF":18,"JKSFAJ":25}'}
   type: ColumnPanel
 is_package: true
