@@ -15,7 +15,7 @@ class player_frm(player_frmTemplate):
             # show game panel
             self.game_pnl.visible= True
             # load game form
-            self.game_pnl.add_component(game_frm(player=self.item['player']))
+            self.game_pnl.add_component(game_frm(player=self.item['player'].title()))
 
     def hide_player_card(self, show):
         self.player_crd.visible = show

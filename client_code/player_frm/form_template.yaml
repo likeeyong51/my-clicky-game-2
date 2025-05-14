@@ -1,5 +1,18 @@
 components:
 - components:
+  - layout_properties: {grid_position: 'VHMDWK,WUXVAT'}
+    name: title_lbl
+    properties:
+      align: center
+      bold: false
+      foreground: theme:On Primary Container
+      icon: fa:copyright
+      icon_align: left
+      role: display
+      spacing:
+        margin: [null, null, 22, null]
+      text: Click Me
+    type: Label
   - components:
     - layout_properties: {grid_position: 'VAAXIT,GENWEC'}
       name: spacer_2
@@ -7,9 +20,10 @@ components:
       type: Spacer
     - data_bindings:
       - {code: 'self.item[''player'']', property: text, writeback: true}
+      event_bindings: {pressed_enter: load_btn_click}
       layout_properties: {grid_position: 'VAAXIT,CDZJHV'}
       name: player_txb
-      properties: {placeholder: 'What should be call you?', tooltip: Enter your player name here}
+      properties: {bold: false, placeholder: 'What should we call you?', tooltip: Enter your name here}
       type: TextBox
     - event_bindings: {click: load_btn_click}
       layout_properties: {grid_position: 'VAAXIT,XYHWBU'}
@@ -27,7 +41,11 @@ components:
       type: Spacer
     layout_properties: {grid_position: 'VLVWNE,LYDXSA'}
     name: player_crd
-    properties: {col_widths: '{"CDZJHV":35,"XYHWBU":15,"CJYYWM":15,"GENWEC":10}', role: outlined-card}
+    properties:
+      col_widths: '{"CDZJHV":35,"XYHWBU":15,"CJYYWM":15,"GENWEC":10}'
+      role: outlined-card
+      spacing:
+        margin: [null, null, 25, null]
     type: ColumnPanel
   - layout_properties: {grid_position: 'XEKUXI,QCSKGT'}
     name: game_pnl

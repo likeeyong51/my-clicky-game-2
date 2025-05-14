@@ -10,9 +10,12 @@ class game_frm(game_frmTemplate):
         # Any code you write here will run before the form opens.
         # get player's name
         self.item['player'] = properties['player']
-        self.refresh_data_bindings()
         # set game parameters
         self.item['start_timer'] = False
+        self.item['level']       = 0 # up to 20 levels
+        self.item['speed']       = 0.05
+
+        self.refresh_data_bindings()
 
 
     def start_btn_click(self, **event_args):
@@ -21,14 +24,16 @@ class game_frm(game_frmTemplate):
             # change the text button to 'Click me'
             self.start_btn.text = 'Click Me'
             self.start_btn.icon = 'fa:arrow-circle-down'
+            self.level_lbl.text = 'Level ' + str(self.item['level'])
             # start the game's timer countdown
-            self.item['start_timer'] = True
+            self.item['start_timer']   = True
             # set start-game parameters
-            self.item['time'] = 25
-            self.item['previous'] = 'X'
-            self.item['score'] = 0
+            self.item['time']          = 25
+            self.item['previous']      = 'X'
+            self.item['score']         = 0
             self.item['target_letter'] = 'A'
-            self.item['target_count'] = 0
+            self.item['target_count']  = 0
+            
         # when game is played:
         # add a point every time the player clicks on the letter A
         else: # play the game
@@ -36,7 +41,7 @@ class game_frm(game_frmTemplate):
                 # add a point to the player's score
                 self.item['score'] += 1
                 # update scoreboard
-                self.score_lbl.text = str(self.item['score'])
+                self.score_lbl.text = str(self.item['score']) + '/' + str(self.item['target_count'])
         
 
     def game_tmr_tick(self, **event_args):
@@ -51,25 +56,36 @@ class game_frm(game_frmTemplate):
             # hide player card from parent form: <My_Clicky_Game_2.player_frm.player_frm object>
             # print(get_open_form())
             get_open_form().hide_player_card(show=False)
+            # show results
+            self.score_lbl.text = str(self.item['score']) + '/' + str(self.item['target_count'])
                 
             # if countdown is zero, game over
             if self.item['time'] == 0:
                 # stop game timer
                 self.item['start_timer'] = False
-                # reset play button to start button
+
+                # reset play button to start button for the next level
                 self.start_btn.text = 'Start'
+                self.start_btn.icon = 'fa:arrow-circle-right'
                 # # reset target
                 self.letter_lbl.text = self.item['previous'] = 'X'
                 # # reset timer interval
                 self.timer_lbl.text = str(25)
-                # show results
-                # self.score_lbl.text = str(self.item['score']) + '/' + str(self.item['target_count'])
+                
                 # show game instructions again
                 self.game_crd.visible = True
                 # hide player card from parent form: <My_Clicky_Game_2.player_frm.player_frm object>
                 get_open_form().hide_player_card(show=True)
-            
-            self.refresh_data_bindings()
+
+                # go to the next level
+                self.item['level'] += 1
+                self.game_tmr.interval -= self.item['speed']
+
+                # if at the level 20
+                if self.game_tmr.interval == 0:
+                    if alert("Congratulations! You've completed all game levels.\nDo you want to start over",
+                         buttons=[('Yes', True),('No', False)]):
+                        self.game_tmr.interval = 1
 
             # generate random letters and display it on the screen
             # Note: no two subsequent letters should be the same
@@ -80,11 +96,12 @@ class game_frm(game_frmTemplate):
             
     def get_random_letter(self):
         '''randomly return a letter between A and G'''
-        letters = 'ABCDEFG'
+        letters = 'ABCDEFGHI'
         random_letter = choice(letters)
 
         # no two subsequent letters should be the same
-        while random_letter == self.item['previous']:
+        while random_letter == self.item['previous']: # if the same
+            # choose another random letter
             random_letter = choice(letters)
         # update previous to latest random letter
         self.item['previous'] = random_letter
