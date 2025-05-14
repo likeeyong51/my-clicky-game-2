@@ -1,5 +1,8 @@
 from ._anvil_designer import game_frmTemplate
 from anvil import *
+import anvil.tables as tables
+import anvil.tables.query as q
+from anvil.tables import app_tables
 from random import choice
 
 class game_frm(game_frmTemplate):
@@ -11,16 +14,17 @@ class game_frm(game_frmTemplate):
         # get player's name
         self.item['player'] = properties['player']
         # set game parameters
-        self.item['start_timer'] = False
-        self.item['level']       = 0 # up to 20 levels
-        self.item['speed']       = 0.05
+        self.item['target_letter'] = 'A'
+        self.item['start_timer']   = False
+        self.item['level']         = 0 # up to 20 levels
+        self.item['speed']         = 0.05
 
         self.refresh_data_bindings()
 
 
     def start_btn_click(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.start_btn.text == 'Start':
+        if self.start_btn.text in 'Play again':
             # change the text button to 'Click me'
             self.start_btn.text = 'Click Me'
             self.start_btn.icon = 'fa:arrow-circle-down'
@@ -31,8 +35,9 @@ class game_frm(game_frmTemplate):
             self.item['time']          = 25
             self.item['previous']      = 'X'
             self.item['score']         = 0
-            self.item['target_letter'] = 'A'
             self.item['target_count']  = 0
+            self.item['instruction']   = f"Click on the letter '{self.item['target_letter']}' as many times as you can in 25 seconds."
+            self.refresh_data_bindings()
             
         # when game is played:
         # add a point every time the player clicks on the letter A
@@ -65,7 +70,7 @@ class game_frm(game_frmTemplate):
                 self.item['start_timer'] = False
 
                 # reset play button to start button for the next level
-                self.start_btn.text = 'Start'
+                self.start_btn.text = 'Play again'
                 self.start_btn.icon = 'fa:arrow-circle-right'
                 # # reset target
                 self.letter_lbl.text = self.item['previous'] = 'X'
@@ -77,9 +82,11 @@ class game_frm(game_frmTemplate):
                 # hide player card from parent form: <My_Clicky_Game_2.player_frm.player_frm object>
                 get_open_form().hide_player_card(show=True)
 
-                # go to the next level
-                self.item['level'] += 1
-                self.game_tmr.interval -= self.item['speed']
+                # go to the next level: adjust some game parameters
+                self.item['level']            += 1
+                self.game_tmr.interval        -= self.item['speed']
+                self.item['target_letter']     = self.get_random_letter(target=True) # randomly change target letter for subsequent level
+                self.game_instruction_lbl.text = f"Click on the letter '{self.item['target_letter']}' as many times as you can in 25 seconds."
 
                 # if at the level 20
                 if self.game_tmr.interval == 0:
@@ -90,24 +97,28 @@ class game_frm(game_frmTemplate):
             # generate random letters and display it on the screen
             # Note: no two subsequent letters should be the same
             self.letter_lbl.text = self.get_random_letter()
+
+            # keep count of target letter
+            if self.letter_lbl.text == self.item['target_letter']:
+                self.item['target_count'] += 1
             
         # else: # game finished
             
             
-    def get_random_letter(self):
+    def get_random_letter(self, letters='ABCDEFG', target=False):
         '''randomly return a letter between A and G'''
-        letters = 'ABCDEFGHI'
         random_letter = choice(letters)
 
         # no two subsequent letters should be the same
         while random_letter == self.item['previous']: # if the same
             # choose another random letter
             random_letter = choice(letters)
-        # update previous to latest random letter
-        self.item['previous'] = random_letter
-        # keep count of target letter
-        if random_letter == self.item['target_letter']:
-            self.item['target_count'] += 1
+        if not target: # if not generating a random target letter
+            # update previous to latest random letter
+            self.item['previous'] = random_letter
+        # # keep count of target letter
+        # if random_letter == self.item['target_letter']:
+        #     self.item['target_count'] += 1
 
         return random_letter
             

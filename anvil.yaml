@@ -1,4 +1,31 @@
 allow_embedding: false
+db_schema:
+  player:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: player
+      type: string
+    server: full
+    title: player
+  score:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: player
+      target: player
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      name: level
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      name: score
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      name: out_of
+      type: number
+    server: full
+    title: score
 dependencies: []
 metadata: {title: Clicky letters}
 name: My Clicky Game 2
