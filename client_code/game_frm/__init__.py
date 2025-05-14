@@ -19,6 +19,14 @@ class game_frm(game_frmTemplate):
         self.item['start_timer']   = False
         self.item['level']         = 0 # up to 20 levels
         self.item['speed']         = 0.05
+        # the player's score
+        self.score_card = {}
+        # self.score_card = {
+        #     'player':self.item['player'], 
+        #     'level':self.item['level'], 
+        #     'score':self.item['score'], 
+        #     'target_count':self.item['target_count']
+        # }
 
         self.refresh_data_bindings()
 
@@ -82,6 +90,14 @@ class game_frm(game_frmTemplate):
                 self.game_crd.visible = True
                 # hide player card from parent form: <My_Clicky_Game_2.player_frm.player_frm object>
                 get_open_form().hide_player_card(show=True)
+
+                # store score card
+                self.score_card = {
+                    'player':self.item['player'], 
+                    'level':self.item['level'], 
+                    'score':self.item['score'], 
+                    'target_count':self.item['target_count']
+                }
 
                 # go to the next level: adjust some game parameters
                 self.item['level']            += 1

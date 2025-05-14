@@ -17,13 +17,16 @@ import anvil.server
 #
 
 @anvil.server.callable
-def add_player(player_name):
-    '''adds a new player to the player table'''
-    # check if the player exists in the player table
-    if app_tables.player.get(player=player_name):
-        return False # the player exists
-        
-    if app_tables.player.add_row(player=player_name):
-        return True # added successfully
+def add_score(score_card):
+    # get player
+    if player := app_tables.player.get(player=score_card['player']):
+        # store player score
+        if app_tables.score.add_row(
+            player=player,
+            level=score_card['level'],
+            score=score_card['score'],
+            target_count=score_card['target_count']
+        ):
+            return True # add score card successful
 
-        
+    return False # add score card failed
