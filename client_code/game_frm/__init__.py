@@ -98,6 +98,9 @@ class game_frm(game_frmTemplate):
                     'score':self.item['score'], 
                     'target_count':self.item['target_count']
                 }
+                # write results of the score list ui
+                self.score_list_txa.text   += f"Level: {self.item['level']}, Score: {self.item['score']}/{self.item['target_count']}"
+                self.score_list_txa.visible = True
 
                 # go to the next level: adjust some game parameters
                 self.item['level']            += 1
