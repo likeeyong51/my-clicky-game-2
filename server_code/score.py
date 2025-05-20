@@ -42,7 +42,7 @@ def get_score(player_name):
         # store player score
         scores = app_tables.score.search(player=player)
         # check if player has a score history
-        print(len(scores))
+        # print(len(scores))
         if len(scores) >= 1:
             score_list = [
                 {
@@ -52,7 +52,7 @@ def get_score(player_name):
                 } for hist in scores
             ]
             
-        print(score_list)
+        # print(score_list)
         return score_list # return player's history
 
     return None # player does not have a history yet
