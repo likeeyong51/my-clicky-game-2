@@ -32,9 +32,15 @@ components:
         icon: fa:check-circle
         role: outlined-button
         spacing:
-          margin: [null, 11, null, 0]
+          margin: [null, 0, null, 0]
+          padding: [null, 21, null, 21]
         text: Let's play
       type: Button
+    - event_bindings: {change: history_chk_change}
+      layout_properties: {grid_position: 'VAAXIT,UKFENC'}
+      name: history_chk
+      properties: {text: Show history, visible: false}
+      type: CheckBox
     - layout_properties: {grid_position: 'VAAXIT,CJYYWM'}
       name: spacer_1
       properties: {height: 32}
@@ -42,7 +48,7 @@ components:
     layout_properties: {grid_position: 'VLVWNE,LYDXSA'}
     name: player_crd
     properties:
-      col_widths: '{"CDZJHV":35,"XYHWBU":15,"CJYYWM":15,"GENWEC":10}'
+      col_widths: '{"CDZJHV":35,"XYHWBU":15,"CJYYWM":5,"GENWEC":15,"UKFENC":12}'
       role: outlined-card
       spacing:
         margin: [null, null, 25, null]
@@ -53,7 +59,7 @@ components:
     type: ColumnPanel
   layout_properties: {slot: default}
   name: content_panel
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{"LYDXSA":40,"QYLCII":20}', visible: true}
   type: ColumnPanel
 - layout_properties: {slot: nav-right}
   name: navbar_links

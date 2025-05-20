@@ -33,3 +33,26 @@ def add_score(score_card):
             return True # add score card successful
 
     return False # add score card failed
+
+@anvil.server.callable
+def get_score(player_name):
+    # get player
+    if player:= app_tables.player.get(player=player_name):
+        score_list = []
+        # store player score
+        scores = app_tables.score.search(player=player)
+        # check if player has a score history
+        print(len(scores))
+        if len(scores) >= 1:
+            score_list = [
+                {
+                    'player': player_name,
+                    'level': hist['level'],
+                    'score': str(hist['score']) + '/' + str(hist['target_count'])
+                } for hist in scores
+            ]
+            
+        print(score_list)
+        return score_list # return player's history
+
+    return None # player does not have a history yet

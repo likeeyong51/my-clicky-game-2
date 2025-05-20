@@ -141,4 +141,8 @@ class game_frm(game_frmTemplate):
             self.item['previous'] = random_letter
 
         return random_letter # returned current random letter
+
+    def get_player_history(self):
+        '''checks and get player's previous scores, otherwise returns None'''
+        return anvil.server.call('get_score', self.score_card['player'])
             
