@@ -6,6 +6,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 # from anvil import Notification
 from ..game_frm import game_frm
+import anvil.media
 
 class player_frm(player_frmTemplate):
     def __init__(self, **properties):
@@ -78,7 +79,10 @@ class player_frm(player_frmTemplate):
         if alert('Are you sure you want to reset your score history?',
              buttons=[('Yes', True), ('No', False)]):
             # reset player's score history
-            if not anvil.server.call('empty_history', self.item['player'].title()):
+            backup_media = anvil.server.call('empty_and_backup_history', self.item['player'].title())
+            if backup_media is None:
                 Notification('No score history found...').show()
-
+            else:
+                print(backup_media)
+                # anvil.media.download(backup_media) # TODO: to be moved to a download link
         self.reset_hist_chk.checked = False # reset ui

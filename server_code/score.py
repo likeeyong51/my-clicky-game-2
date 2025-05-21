@@ -4,6 +4,7 @@ from anvil.tables import app_tables
 import anvil.server
 import anvil.media
 import json
+from datetime import datetime
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -60,45 +61,85 @@ def get_score(player_name):
     return None # player does not have a history yet
 
 # @anvil.server.callable
-def get_backup_history(player_name):
+def get_backup_history_data(player_name):
+    """
+    Retrieves player's score history rows and prepares a list of dictionaries for backup.
+    Returns a tuple: (list_of_score_rows, list_of_backup_dictionaries).
+    If player not found, returns (None, None).
+    If player found but no history, returns ([], []).
+    """
     # get player
-    if player:= app_tables.player.get(player=player_name):
+    if player_row:= app_tables.player.get(player=player_name):
         # search player's score history
-        history = app_tables.score.search(player=player)
+        history_rows = app_tables.score.search(player=player_row)
         # backup to a list of dictionary
-        backup_score = [{
+        backup_score_data = [{
             "player":player_name,
             "level":score['level'],
             "score":score['score'],
             "target_count":score['target_count']
-        } for score in history]
+        } for score in history_rows]
 
-        return history, backup_score
+        return history_rows, backup_score_data
+
+    return None, None # player not found
 
 @anvil.server.callable
-def empty_history(player_name):
+def empty_and_backup_history(player_name):
+    """
+    Backs up a player's score history to a JSON Media object,
+    deletes the history from the database, and returns the Media object for download.
+    Returns:
+        - anvil.Media object: On success, for client-side download.
+        - None: If the player is not found.
+        - anvil.Media object (with empty JSON array): If player exists but has no history.
+    """
+    if not player_name:
+        return None
+        
     # get player's history and backup score list
-    history, backup_score = get_backup_history(player_name)
+    history_rows_to_delete, backup_score_list = get_backup_history_data(player_name)
+    # history, backup_score = get_backup_history(player_name)
     # check for zero history
-    if history is None:
-        return False # history does not exist
-    
+    if history_rows_to_delete is None:
+        return None # history does not exist
+        
+    # Create a unique backup filename (optional, but good practice)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Sanitize player_name for filename if it can contain special characters
+    safe_player_name = "".join(c if c.isalnum() or c in (' ','.','_') else '_' for c in player_name).rstrip()
     # create a backup file name
-    backup_filename = f'{player_name}_backup.json'
-    # backup player history
-    with open(backup_filename, 'w') as f:
-        json.dump(backup_score, f)
+    backup_filename = f'{safe_player_name}_score_backup_{timestamp}.json'
 
-    # Create a Media object from the backup file
-    with open(backup_filename, 'rb') as f:
-        backup_media = anvil.media.from_file(f)
+    # Convert the backup data to a JSON string
+    try:
+        json_string = json.dumps(backup_score_list, indent=2) # indent for readability
+    except TypeError as e:
+        # This might happen if your score data contains non-serializable types (e.g., datetime objects without a custom handler)
+        print(f"Error serializing backup data to JSON for player {player_name}: {e}")
+        # raise anvil.server.ExecutionError(f"Could not serialize backup data: {e}") # Or return an error object
+        return {"error": f"Could not serialize backup data: {e}"}
 
-    # empty player history from main table
-    for row in history:
-        row.delete()
+    # Create a Media object from the JSON string
+    backup_media = anvil.BlobMedia(
+        content_type='application/json',
+        content=json_string.encode('utf-8'),  # Must be bytes
+        name=backup_filename
+    )
+
+    # Delete player history from the main table
+    # This will happen in a single transaction if history_rows_to_delete is not excessively large.
+    # If it can be very large (thousands of rows), then consider batching or background tasks.
+    if history_rows_to_delete: # Only attempt deletion if there's something to delete
+        # backup player history
+        with open(backup_filename, 'w') as f:
+            json.dump(backup_score_list, f)
+
+        # empty player history from main table
+        for row in history_rows_to_delete:
+            row.delete()
+
+    print(f"Successfully backed up and emptied history for player '{player_name}'. Backup file: {backup_filename}")
+    # Return the Media object. Anvil will handle making it downloadable for the client.
+    return backup_media
     
-    anvil.media.download(backup_media)
-    
-    return True # reset player history successful
-        
-        
