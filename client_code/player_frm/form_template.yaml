@@ -61,6 +61,11 @@ components:
     - name: score_pnl
       properties: {item_template: player_frm.RowTemplate1}
       type: RepeatingPanel
+    - event_bindings: {change: reset_hist_chk_change}
+      layout_properties: {slot: footer}
+      name: reset_hist_chk
+      properties: {text: Reset history}
+      type: CheckBox
     layout_properties: {grid_position: 'UZANZB,AZDDGT'}
     name: score_grd
     properties:

@@ -67,8 +67,18 @@ class player_frm(player_frmTemplate):
             self.history_chk.text  = "Show history"
             self.score_grd.visible = False
                 
-
     def refresh_bindings(self):
         '''called from game_frm'''
         self.history_chk.raise_event('change')
         self.refresh_data_bindings()
+
+    def reset_hist_chk_change(self, **event_args):
+        """This method is called when this checkbox is checked or unchecked"""
+        # confirm with user if reset history is a go
+        if alert('Are you sure you want to reset your score history?',
+             buttons=[('Yes', True), ('No', False)]):
+            # reset player's score history
+            if not anvil.server.call('empty_history', self.item['player'].title()):
+                Notification('No score history found...').show()
+
+        self.reset_hist_chk.checked = False # reset ui

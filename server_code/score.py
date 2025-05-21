@@ -2,6 +2,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+import anvil.media
 import json
 
 # This is a server module. It runs on the Anvil server,
@@ -58,14 +59,19 @@ def get_score(player_name):
 
     return None # player does not have a history yet
 
-@anvil.server.callable
+# @anvil.server.callable
 def get_backup_history(player_name):
     # get player
     if player:= app_tables.player.get(player=player_name):
         # search player's score history
         history = app_tables.score.search(player=player)
         # backup to a list of dictionary
-        backup_score = [dict(score) for score in history]
+        backup_score = [{
+            "player":player_name,
+            "level":score['level'],
+            "score":score['score'],
+            "target_count":score['target_count']
+        } for score in history]
 
         return history, backup_score
 
@@ -73,17 +79,26 @@ def get_backup_history(player_name):
 def empty_history(player_name):
     # get player's history and backup score list
     history, backup_score = get_backup_history(player_name)
-    if history is None: #app_tables.player.get(player=player_name):
+    # check for zero history
+    if history is None:
         return False # history does not exist
-    else:
-        # backup player history
-        with open(f'{player_name}_backup.json', 'w') as f:
-            json.dump(backup_score, f)
+    
+    # create a backup file name
+    backup_filename = f'{player_name}_backup.json'
+    # backup player history
+    with open(backup_filename, 'w') as f:
+        json.dump(backup_score, f)
 
-        # empty player history from main table
-        for row in history:
-            row.delete()
+    # Create a Media object from the backup file
+    with open(backup_filename, 'rb') as f:
+        backup_media = anvil.media.from_file(f)
 
-        return True # reset player history successful
+    # empty player history from main table
+    for row in history:
+        row.delete()
+    
+    anvil.media.download(backup_media)
+    
+    return True # reset player history successful
         
         
