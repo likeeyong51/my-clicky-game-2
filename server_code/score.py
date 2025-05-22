@@ -21,6 +21,7 @@ from datetime import datetime
 
 @anvil.server.callable
 def add_score(score_card):
+    '''add player's score card to the score table'''
     # get player
     # print(f"storing score card for {score_card['player']}")
     if player:= app_tables.player.get(player=score_card['player']):
@@ -39,6 +40,7 @@ def add_score(score_card):
 
 @anvil.server.callable
 def get_score(player_name):
+    '''get player's score history list'''
     # get player
     if player:= app_tables.player.get(player=player_name):
         score_list = []
@@ -87,6 +89,7 @@ def get_backup_history_data(player_name):
 
 @anvil.server.callable
 def build_score_history(player_name):
+    '''backup player's score history into a json file for download'''
     if not player_name:
         return None
 
@@ -125,6 +128,7 @@ def build_score_history(player_name):
 
 @anvil.server.callable
 def delete_score_history(player_name):
+    '''find and delete all the player's score history'''
     # get player's history and backup score list
     history_rows_to_delete, backup_score_list = get_backup_history_data(player_name)
     # history, backup_score = get_backup_history(player_name)
