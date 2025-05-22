@@ -41,14 +41,22 @@ components:
       name: history_chk
       properties: {text: Show history, visible: false}
       type: CheckBox
-    - layout_properties: {grid_position: 'VAAXIT,CJYYWM'}
-      name: spacer_1
-      properties: {height: 32}
-      type: Spacer
+    - event_bindings: {click: download_btn_click}
+      layout_properties: {grid_position: 'VAAXIT,CJYYWM'}
+      name: download_btn
+      properties:
+        align: left
+        icon: fa:download
+        icon_align: left
+        spacing:
+          margin: [null, 0, null, 0]
+        text: ''
+        visible: false
+      type: Button
     layout_properties: {grid_position: 'VLVWNE,LYDXSA'}
     name: player_crd
     properties:
-      col_widths: '{"CDZJHV":35,"XYHWBU":15,"CJYYWM":5,"GENWEC":15,"UKFENC":12}'
+      col_widths: '{"CDZJHV":30,"XYHWBU":15,"CJYYWM":12,"GENWEC":10,"UKFENC":15}'
       role: outlined-card
       spacing:
         margin: [null, null, 25, null]
@@ -66,7 +74,7 @@ components:
       name: reset_hist_chk
       properties: {text: Reset history}
       type: CheckBox
-    layout_properties: {grid_position: 'UZANZB,AZDDGT'}
+    layout_properties: {grid_position: 'UZANZB,YGRLKW'}
     name: score_grd
     properties:
       columns:

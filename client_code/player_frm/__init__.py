@@ -17,8 +17,9 @@ class player_frm(player_frmTemplate):
 
     def load_btn_click(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.player_txb.text:
-            self.player_txb.text = self.player_txb.text.title()
+        if self.player_txb.text: # if player name is not empty
+            self.player_txb.text = self.player_txb.text.strip().title()
+            # add player to player's table
             if anvil.server.call('add_player', player_name=self.player_txb.text):
                 Notification(f'{self.player_txb.text} added').show()
             else:
@@ -32,15 +33,18 @@ class player_frm(player_frmTemplate):
             # clear old
             self.game_pnl.clear()
             # load game form
-            self.game_frm = game_frm(self, player=self.item['player'].title())
+            self.item['player']   = self.player_txb.text
+            self.game_frm         = game_frm(self, player=self.item['player'].title())
             self.game_pnl.add_component(self.game_frm)
             # show game panel
             self.game_pnl.visible = True
             # show history option if available
             if anvil.server.call('get_score', self.player_txb.text) is not None:
-                self.history_chk.visible = True
+                self.history_chk.visible  = True
+                self.download_btn.visible = True
             else:
-                self.history_chk.visible = False
+                self.history_chk.visible  = False
+                self.download_btn.visible = False
                 
         else: # name is empty
             Notification('Please enter your name').show()
@@ -69,7 +73,7 @@ class player_frm(player_frmTemplate):
             self.score_grd.visible = False
                 
     def refresh_bindings(self):
-        '''called from game_frm'''
+        '''called from game_frm - to refresh score list after each game'''
         self.history_chk.raise_event('change')
         self.refresh_data_bindings()
 
@@ -77,12 +81,51 @@ class player_frm(player_frmTemplate):
         """This method is called when this checkbox is checked or unchecked"""
         # confirm with user if reset history is a go
         if alert('Are you sure you want to reset your score history?',
-             buttons=[('Yes', True), ('No', False)]):
+            buttons=[('Yes', True), ('No', False)]):
             # reset player's score history
-            backup_media = anvil.server.call('empty_and_backup_history', self.item['player'].title())
-            if backup_media is None:
+            # backup_media = anvil.server.call('empty_and_backup_history', self.item['player'])
+            
+            # if backup_media is None:
+            if anvil.server.call('get_score', self.item['player']) is None:
                 Notification('No score history found...').show()
             else:
-                print(backup_media)
-                # anvil.media.download(backup_media) # TODO: to be moved to a download link
-        self.reset_hist_chk.checked = False # reset ui
+                # print(backup_media)
+                if alert('Do you want a copy of your score history?',
+                    buttons=[('Yes', True), ('No', False)]):
+                    # build backup_file in JSON format
+                    backup_media = anvil.server.call('build_score_history', self.item['player'])
+                    if backup_media is None:
+                        Notification('No score history found...').show()
+                    else:
+                        # delete player's score history
+                        if anvil.server.call('delete_score_history', self.item['player']):
+                            Notification('Your history has been reset...').show()
+                            # confirm score history deletion
+                            score_history = anvil.server.call('get_score', self.item['player'])
+                            # if score history is available
+                            if score_history is not None: 
+                                # reset score panel
+                                self.score_pnl.items   = score_history
+                                self.refresh_data_bindings()
+                            
+                        # invoke browser download
+                        anvil.media.download(backup_media)
+                else:
+                    # delete score history, but no need to backup scores
+                    if anvil.server.call('delete_score_history', self.item['player']):
+                        Notification('Your history has been reset...').show()
+                    else:
+                        Notification('No history to found...').show()
+        
+        # reset ui
+        self.reset_hist_chk.checked = False
+
+
+    def download_btn_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        backup_media = anvil.server.call('build_score_history', self.item['player'])
+        
+        if backup_media is None:
+            Notification('No score history found...').show()
+        else:
+            anvil.media.download(backup_media)
