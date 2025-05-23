@@ -79,47 +79,62 @@ class player_frm(player_frmTemplate):
 
     def reset_hist_chk_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
-        # confirm with user if reset history is a go
-        if alert('Are you sure you want to reset your score history?',
+        # 1. confirm with user if reset history is a go
+        if not alert(
+            'Are you sure you want to reset your score history?',
             buttons=[('Yes', True), ('No', False)]):
-            # reset player's score history
-            # backup_media = anvil.server.call('empty_and_backup_history', self.item['player'])
-            
-            # if backup_media is None:
-            if anvil.server.call('get_score', self.item['player']) is None:
-                Notification('No score history found...').show()
-            else:
-                # print(backup_media)
-                if alert('Do you want a copy of your score history?',
-                    buttons=[('Yes', True), ('No', False)]):
-                    # build backup_file in JSON format
-                    backup_media = anvil.server.call('build_score_history', self.item['player'])
-                    if backup_media is None:
-                        Notification('No score history found...').show()
-                    else:
-                        # delete player's score history
-                        if anvil.server.call('delete_score_history', self.item['player']):
-                            Notification('Your history has been reset...').show()
-                            # confirm score history deletion
-                            score_history = anvil.server.call('get_score', self.item['player'])
-                            # if score history is available
-                            if score_history is not None: 
-                                # reset score panel
-                                self.score_pnl.items   = score_history
-                                self.refresh_data_bindings()
-                            
-                        # invoke browser download
-                        anvil.media.download(backup_media)
-                else:
-                    # delete score history, but no need to backup scores
-                    if anvil.server.call('delete_score_history', self.item['player']):
-                        Notification('Your history has been reset...').show()
-                    else:
-                        Notification('No history to found...').show()
+            # reset ui and exit if user cancel
+            self.reset_hist_chk.checked = False
+            return
         
-        # reset ui
-        self.reset_hist_chk.checked = False
+        # 2. ask if the user wants a backup
+        user_wants_backup = alert(
+            'Do you want a copy of your score history?',
+            buttons=[('Yes', True), ('No', False)])
+        
+        # assume this at the start:
+        backup_media_obj           = None
+        history_successfully_reset = False
+        player_id                  = self.item['player']
+        
+        if user_wants_backup:
+            # try tp build the backup file
+            backup_media_obj = anvil.server.call('build_score_history', player_id)
 
+            if backup_media_obj:
+                # backup was successfully prepared.  Now, delete the history
+                if anvil.server.call('delete_score_history', player_id):
+                    Notification('Your history has been reset.  Your back is downloading...').show()
+                    # download the prepared backup
+                    anvil.media.download(backup_media_obj)
+                    history_successfully_reset = True
+                else:
+                    # Backup was made, but deletion failed. This is an error state.
+                    # The user still has their data in backup_media_obj if we chose to download it,
+                    # but it's safer not to download if the primary operation (delete) failed.
+                    Notification('Score history backup was prepared, but an error occurred while resetting your history. Please try again.').show()
+            else:
+                # No history found to back up (and thus nothing to reset in this path)
+                Notification('No score history found to back up or reset.').show()
+        else:
+            # User does not want a backup. Just try to delete.
+            if anvil.server.call('delete_score_history', player_id):
+                Notification('Your history has been reset.').show()
+                history_successfully_reset = True
+        
+        # 3. update ui if reset was successful
+        if history_successfully_reset:
+            # Confirm score history deletion by fetching the (hopefully empty) new state
+            score_history_after_reset = anvil.server.call('get_score', player_id)
+        
+            # If score history is available (should be None or empty after reset)
+            # Ensure self.score_pnl.items handles None gracefully, e.g., by treating it as an empty list
+            self.score_pnl.items = score_history_after_reset if score_history_after_reset is not None else []
+            self.refresh_data_bindings()
+
+        # 4. Always reset the ui checkbox at the end for the remaining choices
+        self.reset_hist_chk.checked = False
+        
 
     def download_btn_click(self, **event_args):
         """This method is called when the button is clicked"""

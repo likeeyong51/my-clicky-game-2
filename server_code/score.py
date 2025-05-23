@@ -40,7 +40,11 @@ def add_score(score_card):
 
 @anvil.server.callable
 def get_score(player_name):
-    '''get player's score history list'''
+    '''
+    Get player's score history list
+    Returns the score history data (e.g., a list of items) 
+    or None (or an empty list) if no history.
+    '''
     # get player
     if player:= app_tables.player.get(player=player_name):
         score_list = []
@@ -89,7 +93,10 @@ def get_backup_history_data(player_name):
 
 @anvil.server.callable
 def build_score_history(player_name):
-    '''backup player's score history into a json file for download'''
+    '''
+    Backup player's score history into a json file for download.
+    Returns a Media object if history exists and is successfully prepared, otherwise None.
+    '''
     if not player_name:
         return None
 
@@ -128,7 +135,12 @@ def build_score_history(player_name):
 
 @anvil.server.callable
 def delete_score_history(player_name):
-    '''find and delete all the player's score history'''
+    '''
+    Find and delete all the player's score history
+    Returns True if history was successfully deleted (or if no history existed to delete, 
+    effectively a success state for "being empty"), and False if an error occurred during deletion. 
+    TODO: A more robust version might distinguish "nothing to delete" from "error deleting". 
+    '''
     # get player's history and backup score list
     history_rows_to_delete, backup_score_list = get_backup_history_data(player_name)
     # history, backup_score = get_backup_history(player_name)
@@ -138,6 +150,7 @@ def delete_score_history(player_name):
         
     # empty player history from main table
     for row in history_rows_to_delete:
+        # TODO: check for delete error
         row.delete()
     
     return True # history found and deleted

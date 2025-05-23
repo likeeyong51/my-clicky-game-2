@@ -6,7 +6,24 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from random import choice
 
-
+# --- Constants for Game Configuration ---
+INITIAL_GAME_TIME_SECONDS = 25
+MAX_LEVELS = 20 # Assuming 20 levels means level 0 to 19
+INITIAL_TARGET_LETTER = "A"
+INITIAL_TIMER_INTERVAL_SECONDS = 1.0
+TIMER_SPEED_INCREMENT = 0.05 # How much faster the timer gets each level
+DISPLAY_LETTER_OPTIONS = "ABCDEFG"
+GAME_BUTTON_TEXT_START = "Click Me"
+GAME_BUTTON_TEXT_RESTART = "Play Again"
+GAME_BUTTON_ICON_START = "fa:arrow-circle-down"
+GAME_BUTTON_ICON_RESTART = "fa:arrow-circle-right"
+# --- Game States ---
+class GameState:
+    PRE_GAME = "PRE_GAME" # Before the first play or after game over
+    PLAYING = "PLAYING"
+    LEVEL_COMPLETE = "LEVEL_COMPLETE"
+    ALL_LEVELS_COMPLETE = "ALL_LEVELS_COMPLETE"
+    
 class game_frm(game_frmTemplate):
     def __init__(self, parent_form, **properties):
         # Set Form properties and Data Bindings.
@@ -15,7 +32,7 @@ class game_frm(game_frmTemplate):
         # Any code you write here will run before the form opens.
         self.parent_form           = parent_form
         # get player's name
-        self.item["player"]        = properties["player"]
+        self.item["player"]        = properties.get("player", "Unknown Player") # for safer access # properties["player"]
         # set game parameters
         self.item["target_letter"] = "A"
         self.item["start_timer"]   = False
@@ -30,7 +47,6 @@ class game_frm(game_frmTemplate):
         #     'score':self.item['score'],
         #     'target_count':self.item['target_count']
         # }
-
         self.refresh_data_bindings()
 
     def start_btn_click(self, **event_args):
