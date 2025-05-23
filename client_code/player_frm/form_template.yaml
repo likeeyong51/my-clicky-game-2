@@ -51,6 +51,7 @@ components:
         spacing:
           margin: [null, 0, null, 0]
         text: ''
+        tooltip: Download your score list
         visible: false
       type: Button
     layout_properties: {grid_position: 'VLVWNE,LYDXSA'}
