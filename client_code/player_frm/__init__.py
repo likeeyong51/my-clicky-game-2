@@ -79,7 +79,7 @@ class player_frm(player_frmTemplate):
 
     def reset_hist_chk_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
-        # 1. confirm with user if reset history is a go
+        # confirm with user if reset history is a go
         if not alert(
             'Are you sure you want to reset your score history?',
             buttons=[('Yes', True), ('No', False)]):
@@ -87,12 +87,12 @@ class player_frm(player_frmTemplate):
             self.reset_hist_chk.checked = False
             return
         
-        # 2. ask if the user wants a backup
+        # ask if the user wants a backup
         user_wants_backup = alert(
             'Do you want a copy of your score history?',
             buttons=[('Yes', True), ('No', False)])
         
-        # assume this at the start:
+        # assume these at the start:
         backup_media_obj           = None
         history_successfully_reset = False
         player_id                  = self.item['player']
@@ -122,7 +122,7 @@ class player_frm(player_frmTemplate):
                 Notification('Your history has been reset.').show()
                 history_successfully_reset = True
         
-        # 3. update ui if reset was successful
+        # update ui if reset was successful
         if history_successfully_reset:
             # Confirm score history deletion by fetching the (hopefully empty) new state
             score_history_after_reset = anvil.server.call('get_score', player_id)
@@ -132,14 +132,16 @@ class player_frm(player_frmTemplate):
             self.score_pnl.items = score_history_after_reset if score_history_after_reset is not None else []
             self.refresh_data_bindings()
 
-        # 4. Always reset the ui checkbox at the end for the remaining choices
+        # Always reset the ui checkbox at the end for the remaining choices
         self.reset_hist_chk.checked = False
         
 
     def download_btn_click(self, **event_args):
         """This method is called when the button is clicked"""
+        # get a copy of the score history
         backup_media = anvil.server.call('build_score_history', self.item['player'])
-        
+
+        # activate download is available
         if backup_media is None:
             Notification('No score history found...').show()
         else:
