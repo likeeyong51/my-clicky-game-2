@@ -45,7 +45,7 @@ class player_frm(player_frmTemplate):
             else:
                 self.history_chk.visible  = False
                 self.download_btn.visible = False
-                
+
         else: # name is empty
             Notification('Please enter your name').show()
 

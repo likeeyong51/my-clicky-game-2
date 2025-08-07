@@ -141,7 +141,7 @@ class game_frm(game_frmTemplate):
             if self.letter_lbl.text == self.item["target_letter"]:
                 self.item["target_count"] += 1
 
-        # else: # game finished
+        # game finished
 
     def get_random_letter(self, letters="ABCDEFG", target=False):
         """randomly return a letter between A and G"""
@@ -156,3 +156,4 @@ class game_frm(game_frmTemplate):
             self.item["previous"] = random_letter
 
         return random_letter  # returned current random letter
+
