@@ -14,7 +14,7 @@ class game_frm(game_frmTemplate):
         # Any code you write here will run before the form opens.
         self.parent_form           = parent_form
         # get player's name
-        self.item["player"]        = properties.get("player", "Unknown Player") # for safer access # properties["player"]
+        self.item["player"]        = properties.get("player", "Unknown") # for safer access # properties["player"]
         # set game parameters
         self.item["target_letter"] = "A"
         self.item["start_timer"]   = False
@@ -54,7 +54,7 @@ class game_frm(game_frmTemplate):
         # when game is played:
         # add a point every time the player clicks on the letter A
         else:  # play the game
-            if self.letter_lbl.text == self.item["target_letter"]:
+            if self.letter_lbl.text == self.item["target_letter"]: # TODO: prevent double clicking => double counting
                 # add a point to the player's score
                 self.item["score"] += 1
                 # update scoreboard
@@ -66,7 +66,8 @@ class game_frm(game_frmTemplate):
         """This method is called Every [interval] seconds. Does not trigger if [interval] is 0."""
         if self.item["start_timer"]:  # game started
             # start timer countdown
-            self.item["time"]    -= 1
+            self.item["time"] -= 1
+            
             # update timer in ui
             self.timer_lbl.text   = str(self.item["time"])
             # hide game instructions when the game starts
@@ -74,6 +75,7 @@ class game_frm(game_frmTemplate):
             # hide player card from parent form: <My_Clicky_Game_2.player_frm.player_frm object>
             get_open_form().hide_player_card(show=False)
             # print(get_open_form())
+            
             # show results
             self.score_lbl.text = (
                 str(self.item["score"]) + "/" + str(self.item["target_count"])
@@ -144,7 +146,7 @@ class game_frm(game_frmTemplate):
         # game finished
 
     def get_random_letter(self, letters="ABCDEFG", target=False):
-        """randomly return a letter between A and G"""
+        """by default, randomly return a letter between A and G"""
         random_letter = choice(letters)
 
         # no two subsequent letters should be the same
