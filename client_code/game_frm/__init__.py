@@ -23,6 +23,8 @@ class game_frm(game_frmTemplate):
         self.item["speed"]         = 0.05
         # the player's score
         self.score_card            = {}
+        # a flag that checks if the current letter has already been clicked
+        self.letter_scored         = False
         # self.score_card = {
         #     'player':self.item['player'],
         #     'level':self.item['level'],
@@ -54,9 +56,12 @@ class game_frm(game_frmTemplate):
         # when game is played:
         # add a point every time the player clicks on the letter A
         else:  # play the game
-            if self.letter_lbl.text == self.item["target_letter"]: # TODO: prevent double clicking => double counting
+            if self.letter_lbl.text == self.item["target_letter"] and \
+               not self.letter_scored: # prevent double clicking => double counting
                 # add a point to the player's score
                 self.item["score"] += 1
+                self.letter_scored  = True
+                
                 # update scoreboard
                 self.score_lbl.text = (
                     str(self.item["score"]) + "/" + str(self.item["target_count"])
@@ -156,6 +161,7 @@ class game_frm(game_frmTemplate):
         if not target:  # if not generating a random target letter
             # update previous to latest random letter
             self.item["previous"] = random_letter
-
+            self.letter_scored    = False
+            
         return random_letter  # returned current random letter
 
